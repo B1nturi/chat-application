@@ -1,9 +1,13 @@
 // Description: Main entry point for the application.
+// external imports
 const express = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+
+// internal imports
+const { notFound, errorHandler } = require('./middlewares/common/errorHandler');
 
 // initialize express app
 const app = express();
@@ -33,7 +37,12 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // routing setup
 
-// error handling
+// 404 not found handler
+app.use(notFound);
+
+// default error handler
+app.use(errorHandler);
+
 
 // start server
 app.listen(process.env.PORT, () => {
