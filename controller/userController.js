@@ -1,8 +1,6 @@
 // getUsers page
 function getUsers(req, res) {
-    res.render('users', {
-        title: 'Users Page',
-    });
+    res.render('users');
 }
 
 // export
