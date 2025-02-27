@@ -13,5 +13,5 @@ coverage
 benchmarks/graphs
 
 # Others
-fileUpload/uploads
+public/uploads
 .env
