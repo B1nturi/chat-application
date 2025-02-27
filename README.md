@@ -1,6 +1,3 @@
-Certainly! Below is a README file tailored for your project, inspired by the original one you provided. Make sure to replace placeholders with your own information.
-
----
 
 [![Youtube][youtube-shield]][youtube-url]
 [![Facebook][facebook-shield]][facebook-url]
@@ -98,4 +95,3 @@ Feel free to connect with me on social media:
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/your-linkedin-profile
 
----
