@@ -5,7 +5,7 @@
             <h2>Create New User</h2>
         </div>
         <div class="modal-body">
-            <form method="post" action="/users" enctype="multipart/form-data" id="add-user-form">
+            <form method="POST" action="/users" enctype="multipart/form-data" id="add-user-form">
                 <input type="text" placeholder="enter name" name="name" />
                 <p class="error name-error"></p>
 
@@ -21,6 +21,8 @@
                 <input type="file" name="avatar" />
                 <p class="error avatar-error"></p>
 
+                <p class="error common-error"></p>
+
                 <input type="submit" value="Submit" />
             </form>
         </div>
@@ -31,7 +33,7 @@
     const form = document.querySelector("#add-user-form");
 
     // success toast
-    const successToast = Toasify({
+    const successToast = Toastify({
         text: "User created successfully",
         duration: 3000,
     });

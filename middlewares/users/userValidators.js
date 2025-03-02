@@ -28,7 +28,7 @@ const addUserValidators = [
                 throw createError(err.message);
             }
         }),
-    check('phone')
+    check('mobile')
         .isMobilePhone("bn-BD", {
             strictMode: true,
         })
