@@ -7,19 +7,19 @@
         <div class="modal-body">
             <form method="post" action="/users" enctype="multipart/form-data" id="add-user-form">
                 <input type="text" placeholder="enter name" name="name" />
-                <p class="error name-error">This is error</p>
+                <p class="error name-error"></p>
 
                 <input type="text" placeholder="enter email" name="email" />
-                <p class="error email-error">This is error</p>
+                <p class="error email-error"></p>
 
                 <input type="text" placeholder="enter mobile" name="mobile" />
-                <p class="error mobile-error">This is error</p>
+                <p class="error mobile-error"></p>
 
                 <input type="password" placeholder="enter password" name="password" />
-                <p class="error password-error">This is error</p>
+                <p class="error password-error"></p>
 
                 <input type="file" name="avatar" />
-                <p class="error avatar-error">This is error</p>
+                <p class="error avatar-error"></p>
 
                 <input type="submit" value="Submit" />
             </form>
@@ -34,7 +34,6 @@
     const successToast = Toasify({
         text: "User created successfully",
         duration: 3000,
-        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
     });
 
     function closeModal() {
@@ -47,6 +46,17 @@
     // form submit handler
     form.onsubmit = async function (event) {
         event.preventDefault();
+
+        // remove all error classes
+        const errorPlaceholders = document.querySelectorAll("p.error");
+        errorPlaceholders.forEach((placeholder) => {
+            placeholder.style.display = "none";
+        });
+
+        const inputErrors = document.querySelectorAll("input.error");
+        inputErrors.forEach((input) => {
+            input.classList.remove("error");
+        });
 
         // prepare form data
         const formData = new FormData(form);
@@ -61,15 +71,15 @@
         let result = await response.json();
 
         // handle error and response
-        if (result.error) {
+        if (result.errors) {
             // errors
-            Object.keys(result.error).forEach((fieldName) => {
+            Object.keys(result.errors).forEach((fieldName) => {
                 // add error class to all inputs
                 form[fieldName].classList.add("error");
 
                 // set all error placeholders (p tags) textContent
                 const errorPlaceholder = document.querySelector(`.${fieldName}-error`);
-                errorPlaceholder.textContent = result.error[fieldName].msg;
+                errorPlaceholder.textContent = result.errors[fieldName].msg;
 
                 // make all placeholders visible
                 errorPlaceholder.style.display = "block";
