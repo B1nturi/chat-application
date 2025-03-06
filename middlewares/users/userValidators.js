@@ -37,7 +37,7 @@ const addUserValidators = [
         .custom(async (value) => {
             try {
                 const user = await User.findOne({
-                    phone:
+                    mobile:
                         value
                 });
                 if (user) {

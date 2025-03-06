@@ -1,3 +1,7 @@
+// external imports
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 // internal imports
 const User = require('../model/User');
 
@@ -11,31 +15,42 @@ async function postLogin(req, res) {
     try {
         // find a user who has this email/username
         const user = await User.findOne({
-            where: {
-                email: req.body.email,
-            },
+            $or: [
+                { email: req.body.email },
+                { username: req.body.email },
+            ],
         });
-        // if user not found
-        if (!user) {
-            return res.status(401).json({
-                message: 'Invalid credentials',
+
+        // compare password
+        const isMatch = await user.comparePassword(req.body.password, user.password);
+        if (isMatch) {
+            // prepare user object to generate token
+            const userObject = {
+                username: user.username,
+                mobile: user.mobile,
+                email: user.email,
+                role: "user",
+            };
+
+            // generate token
+            const token = jwt.sign(userObject, process.env.JWT_SECRET, {
+                expiresIn: process.env.JWT_EXPIRES_IN,
+
+            });
+
+            // set cookie
+            res.cookie('token', token, {
+                httpOnly: true, 
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            });
+
+            // send response
+            res.status(200).json({
+                message: 'Login successful',
             });
         }
-        // if user found
-        // check password
-        const isValidPassword = user.comparePassword(req.body.password);
-        if (!isValidPassword) {
-            return res.status(401).json({
-                message: 'Invalid credentials',
-            });
-        }
-        // generate token
-        const token = user.generateToken();
-        // send response
-        res.status(200).json({
-            message: 'Login successful',
-            token,
-        });
+
+
     } catch (err) {
         res.status(500).json({
             message: 'Server error',
@@ -44,7 +59,7 @@ async function postLogin(req, res) {
 }
 
 // export
-module.exports = { 
+module.exports = {
     getLogin,
     postLogin,
 };
