@@ -1,6 +1,7 @@
 // external imports
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const createError = require('http-errors');
 
 // internal imports
 const User = require('../model/User');
@@ -21,8 +22,13 @@ async function postLogin(req, res) {
             ],
         });
 
+        // if user not found
+        if (!user) {
+            throw createError('Login failed! Please try again.');
+        }
+
         // compare password
-        const isMatch = await user.comparePassword(req.body.password, user.password);
+        const isMatch = await bcrypt.comparePassword(req.body.password, user.password);
         if (isMatch) {
             // prepare user object to generate token
             const userObject = {
@@ -39,21 +45,31 @@ async function postLogin(req, res) {
             });
 
             // set cookie
-            res.cookie('token', token, {
-                httpOnly: true, 
-                maxAge: 7 * 24 * 60 * 60 * 1000
+            res.cookie(process.env.COOKIE_NAME, token, {
+                maxAge: process.env.JWT_EXPIRES_IN,
+                signed: true,
+                httpOnly: true,
             });
+
+            // set logged in user local identifier
+            res.locals.loggedInUser = userObject;
 
             // send response
-            res.status(200).json({
-                message: 'Login successful',
-            });
+            res.render("inbox");
+        } else {
+            throw createError('Login failed! Please try again.');
         }
 
-
     } catch (err) {
-        res.status(500).json({
-            message: 'Server error',
+        res.render('login', {
+            data: {
+                username: req.body.username,
+            },
+            errors: {
+                common: {
+                    msg: err.message,
+                },
+            },
         });
     }
 }
