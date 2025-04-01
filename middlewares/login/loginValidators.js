@@ -31,6 +31,6 @@ const loginValidationHandler = (req, res, next) => {
 }
 
 module.exports = {
-    loginValidators,
+    loginValidator,
     loginValidationHandler,
 };

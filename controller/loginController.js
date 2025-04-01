@@ -1,10 +1,10 @@
 // external imports
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const createError = require('http-errors');
 
 // internal imports
-const User = require('../model/User');
+const User = require('../models/People');
 
 // getLogin page
 function getLogin(req, res) {
@@ -28,7 +28,7 @@ async function postLogin(req, res) {
         }
 
         // compare password
-        const isMatch = await bcrypt.comparePassword(req.body.password, user.password);
+        const isMatch = await bcrypt.compare(req.body.password, user.password);
         if (isMatch) {
             // prepare user object to generate token
             const userObject = {
@@ -74,8 +74,26 @@ async function postLogin(req, res) {
     }
 }
 
+// logout
+function logout(req, res) {
+    try {
+        // clear cookie
+        res.clearCookie(process.env.COOKIE_NAME);
+        res.redirect('/');
+    } catch (err) {
+        res.render('login', {
+            errors: {
+                common: {
+                    msg: err.message,
+                },
+            },
+        });
+    }
+}
+
 // export
 module.exports = {
     getLogin,
     postLogin,
+    logout,
 };
